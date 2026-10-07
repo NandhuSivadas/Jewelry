@@ -1,0 +1,32 @@
+# Elorah Jewelry - Technology Stack Overview
+
+## Core Application
+* **Framework**: Django 5.1 (Python 3.12)
+* **Frontend**: HTML5, HTMX, Tailwind CSS, Vanilla JS
+* **Authentication**: Custom User Model (Email), Argon2 Password Hashing, django-otp (2FA for admin)
+
+## Database & Data Storage
+* **Primary Database**: PostgreSQL 16 (Relational DB, JSON fields, constraints)
+* **Caching & Broker**: Redis 7 (In-memory data store for caching, rate limiting, and Celery message broker)
+* **Media Storage**: Local file system served by Nginx (Production ready, decoupled from app server)
+
+## Asynchronous Processing
+* **Task Queue**: Celery (Handles background jobs like email sending, invoice PDF generation)
+* **Periodic Tasks**: Celery Beat (Handles scheduled tasks like releasing abandoned stock reservations)
+
+## E-Commerce & Third-Party
+* **Payments**: Razorpay (Payment gateway with server-side webhook verification)
+* **PDF Invoicing**: WeasyPrint (Generates GST-compliant PDF invoices)
+* **Hierarchy**: django-mptt (Modified Preorder Tree Traversal for nested product categories)
+
+## Security & Reliability
+* **Brute-force Protection**: django-axes (Blocks IP/users after failed logins)
+* **Rate Limiting**: django-ratelimit (Protects sensitive endpoints)
+* **Security Headers**: django-csp (Content Security Policy)
+* **Error Monitoring**: Sentry (Captures exceptions and performance metrics)
+
+## Infrastructure & Deployment
+* **Web Server**: Gunicorn (WSGI HTTP Server for Python)
+* **Reverse Proxy / Edge**: Nginx (TLS termination, serving static/media files, rate limiting, security headers)
+* **Static Files**: WhiteNoise (Serves compressed static files directly from Gunicorn)
+* **Containerization**: Docker & Docker Compose (Isolated environments for dev and prod)

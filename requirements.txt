@@ -1,0 +1,36 @@
+# Core Django & DB
+Django~=5.1
+psycopg[binary]~=3.2
+django-environ~=0.11
+
+# Async & Caching
+celery[redis]~=5.4
+django-celery-beat~=2.7
+redis~=5.1
+django-redis~=5.4
+
+# Security & Auth
+argon2-cffi~=23.1
+django-axes~=7.0
+django-ratelimit~=4.1
+django-csp~=3.8
+django-otp~=1.5
+qrcode~=7.4
+
+# E-commerce Features
+razorpay~=1.4
+weasyprint~=62.0
+django-mptt~=0.16
+
+# Utilities
+Pillow~=10.4
+python-magic~=0.4
+django-htmx~=1.19
+django-filter~=24.3
+django-cleanup~=9.0
+django-extensions~=3.2
+
+# Monitoring & Production
+sentry-sdk[django,celery]~=2.14
+whitenoise[brotli]~=6.7
+gunicorn
