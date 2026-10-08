@@ -1,0 +1,74 @@
+﻿{% extends "base.html" %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto py-10 px-4 flex">
+    <!-- Image Gallery -->
+    <div class="w-1/2 pr-8">
+        {% if product.images.all %}
+            <img src="{{ product.images.first.image.url }}" class="w-full object-cover border" alt="{{ product.name }}">
+            <div class="flex mt-4 space-x-2 overflow-x-auto">
+                {% for img in product.images.all %}
+                    <img src="{{ img.thumbnail.url|default:img.image.url }}" class="w-20 h-20 object-cover border cursor-pointer">
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="w-full h-96 bg-gray-200 flex items-center justify-center text-gray-500">No Image Available</div>
+        {% endif %}
+    </div>
+
+    <!-- Product Info -->
+    <div class="w-1/2">
+        <p class="text-gray-500 text-sm mb-2">
+            <a href="{% url 'catalog:product-list' %}">Catalog</a> &gt; 
+            <a href="{% url 'catalog:category-detail' product.category.slug %}">{{ product.category.name }}</a>
+        </p>
+        <h1 class="text-4xl font-serif text-charcoal-900 mb-2">{{ product.name }}</h1>
+        <p class="text-sm text-gray-500 mb-6">SKU: {{ product.sku }}</p>
+        
+        <div class="text-2xl font-bold text-gold-600 mb-6">
+            {% if product.pricing_mode == 'FIXED' %}
+                ₹{{ product.base_price }}
+            {% else %}
+                Dynamic Price (Calculated based on today's rate)
+            {% endif %}
+        </div>
+
+        <p class="text-lg mb-6">{{ product.short_description }}</p>
+
+        <!-- Variants -->
+        {% if product.variants.exists %}
+        <div class="mb-6">
+            <label class="block font-bold mb-2">Size / Variant:</label>
+            <select class="w-full border p-2 bg-white">
+                {% for variant in product.variants.all %}
+                    <option value="{{ variant.id }}">{{ variant.size }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+
+        <!-- Add to Cart (Placeholder form) -->
+        <form method="post" action="/cart/add/{{ product.id }}/" class="mb-8 flex space-x-4">
+            {% csrf_token %}
+            <input type="number" name="quantity" value="1" min="1" class="w-20 border p-2 text-center">
+            <button type="submit" class="flex-1 bg-charcoal-900 text-white font-bold p-3 hover:bg-gold-600 transition">Add to Cart</button>
+            <button type="button" class="border border-charcoal-900 px-4 flex items-center justify-center hover:bg-gray-50 transition">♡ Wishlist</button>
+        </form>
+
+        <!-- Product Specs Tabs -->
+        <div class="border-t pt-6">
+            <h3 class="font-bold text-lg mb-4">Specifications</h3>
+            <table class="w-full text-sm">
+                <tr class="border-b"><td class="py-2 text-gray-600">Material</td><td class="py-2 font-medium">{{ product.material.name }}</td></tr>
+                <tr class="border-b"><td class="py-2 text-gray-600">Purity</td><td class="py-2 font-medium">{{ product.purity.name }}</td></tr>
+                {% if product.gross_weight %}
+                <tr class="border-b"><td class="py-2 text-gray-600">Gross Weight</td><td class="py-2 font-medium">{{ product.gross_weight }} g</td></tr>
+                {% endif %}
+                {% for attr in product.attributes.all %}
+                <tr class="border-b"><td class="py-2 text-gray-600">{{ attr.name }}</td><td class="py-2 font-medium">{{ attr.value }}</td></tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

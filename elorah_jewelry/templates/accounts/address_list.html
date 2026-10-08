@@ -1,0 +1,35 @@
+﻿{% extends "base.html" %}
+{% block title %}My Addresses{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto py-10 px-4 flex">
+    <div class="w-1/4 pr-4">
+        <ul class="space-y-2">
+            <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
+            <li><a href="{% url 'accounts:address-list' %}" class="font-bold text-gold-600">Addresses</a></li>
+        </ul>
+    </div>
+    <div class="w-3/4">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-serif">Saved Addresses</h2>
+            <a href="{% url 'accounts:address-add' %}" class="bg-charcoal-900 text-white px-4 py-2">Add New</a>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            {% for address in addresses %}
+            <div class="border p-4">
+                <h4 class="font-bold">{{ address.label }}</h4>
+                <p>{{ address.full_name }}<br>{{ address.address_line_1 }}<br>{{ address.city }}, {{ address.state }} - {{ address.pincode }}</p>
+                <div class="mt-4 flex space-x-2 text-sm">
+                    <a href="{% url 'accounts:address-edit' address.pk %}" class="text-blue-600">Edit</a>
+                    <form action="{% url 'accounts:address-delete' address.pk %}" method="post" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="text-red-600">Delete</button>
+                    </form>
+                </div>
+            </div>
+            {% empty %}
+            <p>No addresses saved yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

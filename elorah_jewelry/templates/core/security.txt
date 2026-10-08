@@ -1,0 +1,2 @@
+Contact: mailto:{{ site_config.store_email }}
+Preferred-Languages: en

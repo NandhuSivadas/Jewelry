@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Contact Us{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto py-20 px-4">
+    <h1 class="text-4xl font-serif text-gold-600 mb-8">Contact {{ site_config.store_name }}</h1>
+    <p class="text-lg">Email: {{ site_config.store_email }}</p>
+    <p class="text-lg">Phone: {{ site_config.store_phone }}</p>
+</div>
+{% endblock %}

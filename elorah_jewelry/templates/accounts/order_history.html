@@ -1,0 +1,16 @@
+﻿{% extends "base.html" %}
+{% block title %}Order History{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto py-10 px-4 flex">
+    <div class="w-1/4 pr-4">
+        <ul class="space-y-2">
+            <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
+            <li><a href="{% url 'accounts:order-history' %}" class="font-bold text-gold-600">Orders</a></li>
+        </ul>
+    </div>
+    <div class="w-3/4">
+        <h2 class="text-3xl font-serif mb-6">Order History</h2>
+        <p>No orders yet.</p>
+    </div>
+</div>
+{% endblock %}
