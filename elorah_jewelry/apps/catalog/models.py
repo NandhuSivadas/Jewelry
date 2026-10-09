@@ -154,3 +154,11 @@ class StockRecord(models.Model):
     @property
     def available(self) -> int:
         return self.quantity - self.reserved
+
+class SlugRedirect(models.Model):
+    old_slug = models.CharField(max_length=255, unique=True, db_index=True)
+    new_slug = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.old_slug} -> {self.new_slug}"

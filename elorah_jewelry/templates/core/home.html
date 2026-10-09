@@ -1,8 +1,122 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
+
 {% block title %}Home{% endblock %}
+
 {% block content %}
-<div class="text-center py-20">
-    <h1 class="text-5xl font-serif text-gold-600">Welcome to {{ site_config.store_name }}</h1>
-    <p class="mt-4 text-xl">Timeless Elegance</p>
-</div>
+<!-- Hero Section -->
+<section class="relative h-[80vh] bg-charcoal-900 overflow-hidden flex items-center justify-center">
+    {% if hero_banners %}
+        <div class="absolute inset-0 w-full h-full">
+            <img src="{{ hero_banners.0.image.url }}" alt="{{ hero_banners.0.title }}" class="w-full h-full object-cover opacity-60">
+        </div>
+        <div class="relative z-10 text-center px-4 max-w-3xl mx-auto">
+            <h1 class="text-5xl md:text-7xl font-serif text-ivory-50 mb-6 drop-shadow-md">{{ hero_banners.0.title }}</h1>
+            <p class="text-xl md:text-2xl text-ivory-100 mb-8 font-light drop-shadow">{{ hero_banners.0.subtitle }}</p>
+            <a href="{% url 'catalog:product-list' %}" class="inline-block bg-gold-600 hover:bg-gold-700 text-white font-bold py-4 px-10 tracking-widest uppercase transition duration-300">Discover Collection</a>
+        </div>
+    {% else %}
+        <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-charcoal-900 to-charcoal-800"></div>
+        <div class="relative z-10 text-center px-4">
+            <h1 class="text-5xl md:text-7xl font-serif text-ivory-50 mb-6">Timeless Elegance</h1>
+            <p class="text-xl text-ivory-100 mb-8 font-light">Exquisite 22k Gold Jewelry crafted for the modern soul.</p>
+            <a href="{% url 'catalog:product-list' %}" class="inline-block bg-gold-600 hover:bg-gold-700 text-white font-bold py-4 px-10 tracking-widest uppercase transition duration-300">Shop Now</a>
+        </div>
+    {% endif %}
+</section>
+
+<!-- Features Strip -->
+<section class="bg-gold-50 py-8 border-b border-gold-100">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div class="flex flex-col items-center">
+                <svg class="w-8 h-8 text-gold-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                <h4 class="font-bold text-sm tracking-wide text-charcoal-800">100% Certified</h4>
+                <p class="text-xs text-gray-500 mt-1">BIS Hallmarked Gold</p>
+            </div>
+            <div class="flex flex-col items-center">
+                <svg class="w-8 h-8 text-gold-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                <h4 class="font-bold text-sm tracking-wide text-charcoal-800">Secure Payments</h4>
+                <p class="text-xs text-gray-500 mt-1">Encrypted Transactions</p>
+            </div>
+            <div class="flex flex-col items-center">
+                <svg class="w-8 h-8 text-gold-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                <h4 class="font-bold text-sm tracking-wide text-charcoal-800">Insured Shipping</h4>
+                <p class="text-xs text-gray-500 mt-1">Free Delivery India-wide</p>
+            </div>
+            <div class="flex flex-col items-center">
+                <svg class="w-8 h-8 text-gold-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z"></path></svg>
+                <h4 class="font-bold text-sm tracking-wide text-charcoal-800">Easy Returns</h4>
+                <p class="text-xs text-gray-500 mt-1">15-Day Return Policy</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Collections -->
+<section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-serif text-charcoal-900 mb-4">Shop by Category</h2>
+            <div class="w-24 h-1 bg-gold-500 mx-auto"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {% for cat in featured_categories %}
+            <a href="{% url 'catalog:category-detail' cat.slug %}" class="group relative h-96 overflow-hidden block">
+                <div class="absolute inset-0 bg-charcoal-900 transition duration-500 group-hover:bg-opacity-40 bg-opacity-20 z-10"></div>
+                <!-- Since Category doesn't have an image field natively in the plan, using placeholder. In real app, add image field. -->
+                <img src="https://via.placeholder.com/400x600?text={{ cat.name }}" alt="{{ cat.name }}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                <div class="absolute bottom-8 left-0 right-0 text-center z-20">
+                    <h3 class="text-2xl font-serif text-white mb-2">{{ cat.name }}</h3>
+                    <span class="inline-block border-b-2 border-gold-500 text-white text-sm uppercase tracking-widest pb-1 opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-4 group-hover:translate-y-0">Explore</span>
+                </div>
+            </a>
+            {% empty %}
+            <div class="col-span-4 text-center text-gray-500">Categories not set up yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Best Sellers -->
+<section class="py-20 bg-ivory-50">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-end mb-12">
+            <div>
+                <h2 class="text-3xl font-serif text-charcoal-900 mb-4">Bestsellers</h2>
+                <div class="w-24 h-1 bg-gold-500"></div>
+            </div>
+            <a href="{% url 'catalog:product-list' %}" class="text-gold-600 hover:text-gold-800 font-bold tracking-wider uppercase text-sm flex items-center gap-2">
+                View All <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+            </a>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {% for product in best_sellers %}
+                {% include "catalog/partials/_product_card.html" with product=product %}
+            {% empty %}
+                <div class="col-span-4 text-center text-gray-500">Products not set up yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Promotional Banner -->
+{% if promo_banner %}
+<section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="relative h-64 md:h-96 overflow-hidden flex items-center">
+            <img src="{{ promo_banner.image.url }}" class="absolute inset-0 w-full h-full object-cover">
+            <div class="absolute inset-0 bg-charcoal-900 bg-opacity-40"></div>
+            <div class="relative z-10 p-12 max-w-2xl text-white">
+                <h3 class="text-3xl md:text-5xl font-serif mb-4">{{ promo_banner.title }}</h3>
+                <p class="mb-8 text-lg">{{ promo_banner.subtitle }}</p>
+                {% if promo_banner.link_url %}
+                <a href="{{ promo_banner.link_url }}" class="bg-white text-charcoal-900 px-8 py-3 font-bold hover:bg-gold-50 transition">Shop Offer</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
 {% endblock %}

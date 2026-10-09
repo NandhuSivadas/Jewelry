@@ -1,54 +1,37 @@
-from django.http import JsonResponse
-from django.shortcuts import render
-from django.views.generic import TemplateView
-from django.db import connection
-from django.core.cache import cache
+﻿from django.shortcuts import render
+from django.views import View
+from apps.catalog.models import Product, Category
+from apps.promotions.models import Banner
 
-class HomeView(TemplateView):
-    template_name = "core/home.html"
-
-class AboutView(TemplateView):
-    template_name = "core/about.html"
-
-class ContactView(TemplateView):
-    template_name = "core/contact.html"
-
-def health_check(request):
-    db_ok = True
-    try:
-        connection.ensure_connection()
-    except Exception:
-        db_ok = False
+class HomeView(View):
+    def get(self, request):
+        hero_banners = Banner.objects.filter(position=Banner.Position.HERO, is_active=True).order_by('sort_order')
+        promo_banners = Banner.objects.filter(position=Banner.Position.PROMO, is_active=True).order_by('sort_order')
         
-    redis_ok = True
-    try:
-        cache.set("health_check", "1", timeout=1)
-    except Exception:
-        redis_ok = False
+        # In a real app we'd have an is_bestseller flag or a query, but here we just take the first few
+        best_sellers = Product.objects.filter(is_active=True).order_by('-created_at')[:4]
+        new_arrivals = Product.objects.filter(is_active=True).order_by('-created_at')[:4]
+        
+        # Featured categories (using first 4)
+        featured_categories = Category.objects.filter(is_active=True)[:4]
 
-    status = "healthy" if db_ok and redis_ok else "unhealthy"
-    status_code = 200 if status == "healthy" else 503
-    
-    return JsonResponse({
-        "status": status,
-        "database": "ok" if db_ok else "down",
-        "redis": "ok" if redis_ok else "down",
-    }, status=status_code)
-
-def security_txt(request):
-    return render(request, "core/security.txt", content_type="text/plain")
-
-def legal_page(request, slug):
-    return render(request, f"core/{slug}.html")
+        context = {
+            "hero_banners": hero_banners,
+            "promo_banner": promo_banners.first(),
+            "best_sellers": best_sellers,
+            "new_arrivals": new_arrivals,
+            "featured_categories": featured_categories,
+        }
+        return render(request, "core/home.html", context)
 
 def error_400(request, exception):
-    return render(request, "errors/400.html", status=400)
+    return render(request, "400.html", status=400)
 
 def error_403(request, exception):
-    return render(request, "errors/403.html", status=403)
+    return render(request, "403.html", status=403)
 
 def error_404(request, exception):
-    return render(request, "errors/404.html", status=404)
+    return render(request, "404.html", status=404)
 
 def error_500(request):
-    return render(request, "errors/500.html", status=500)
+    return render(request, "500.html", status=500)

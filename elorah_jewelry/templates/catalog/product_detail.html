@@ -1,5 +1,30 @@
 ﻿{% extends "base.html" %}
 {% block title %}{{ product.name }}{% endblock %}
+
+{% block extra_head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "{{ product.name }}",
+  {% if product.images.first %}
+  "image": ["{{ request.scheme }}://{{ request.get_host }}{{ product.images.first.image.url }}"],
+  {% endif %}
+  "description": "{{ product.short_description }}",
+  "sku": "{{ product.sku }}",
+  "brand": {"@type": "Brand", "name": "Elorah Jewelry"},
+  "material": "{{ product.material.name }}",
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "INR",
+    "price": "{% if product.pricing_mode == 'FIXED' %}{{ product.base_price }}{% else %}Price on request{% endif %}",
+    "availability": "https://schema.org/InStock",
+    "seller": {"@type": "Organization", "name": "Elorah Jewelry"}
+  }
+}
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="max-w-6xl mx-auto py-10 px-4 flex">
     <!-- Image Gallery -->
@@ -48,11 +73,12 @@
         {% endif %}
 
         <!-- Add to Cart (Placeholder form) -->
-        <form method="post" action="/cart/add/{{ product.id }}/" class="mb-8 flex space-x-4">
+        <form method="post" action="{% url 'cart:add' %}" class="mb-8 flex space-x-4">
             {% csrf_token %}
+            <input type="hidden" name="product_id" value="{{ product.id }}">
             <input type="number" name="quantity" value="1" min="1" class="w-20 border p-2 text-center">
             <button type="submit" class="flex-1 bg-charcoal-900 text-white font-bold p-3 hover:bg-gold-600 transition">Add to Cart</button>
-            <button type="button" class="border border-charcoal-900 px-4 flex items-center justify-center hover:bg-gray-50 transition">♡ Wishlist</button>
+            <button type="button" class="border border-charcoal-900 px-4 flex items-center justify-center hover:bg-gray-50 transition" hx-post="{% url 'wishlist:add' product.id %}" hx-swap="outerHTML">♡ Wishlist</button>
         </form>
 
         <!-- Product Specs Tabs -->

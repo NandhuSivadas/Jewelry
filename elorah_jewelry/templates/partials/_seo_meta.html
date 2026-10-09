@@ -1,2 +1,12 @@
-<title>{% block title %}{{ site_config.store_name }}{% endblock %} | {{ site_config.store_name }}</title>
-<meta name="description" content="{% block meta_description %}Premium jewellery...{% endblock %}">
+﻿<title>{% block title %}Elorah Jewelry{% endblock %} | Elorah Jewelry</title>
+<meta name="description" content="{% block meta_description %}Premium jewellery from Elorah.{% endblock %}">
+<link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
+
+<!-- Open Graph -->
+<meta property="og:title" content="{% block og_title %}{{ self.title }}{% endblock %}">
+<meta property="og:description" content="{% block og_description %}Premium jewellery from Elorah.{% endblock %}">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:type" content="{% block og_type %}website{% endblock %}">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">

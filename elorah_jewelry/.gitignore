@@ -49,3 +49,7 @@ venv.bak/
 # OS
 .DS_Store
 Thumbs.db
+
+# Exclude AI planning artifacts except implementation_plan.md
+phase*.md
+security_audit.md
