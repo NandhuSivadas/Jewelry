@@ -1,99 +1,136 @@
 ﻿{% extends "base.html" %}
-{% block title %}{{ product.name }}{% endblock %}
+{% load humanize %}
 
-{% block extra_head %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Product",
-  "name": "{{ product.name }}",
-  {% if product.images.first %}
-  "image": ["{{ request.scheme }}://{{ request.get_host }}{{ product.images.first.image.url }}"],
-  {% endif %}
-  "description": "{{ product.short_description }}",
-  "sku": "{{ product.sku }}",
-  "brand": {"@type": "Brand", "name": "Elorah Jewelry"},
-  "material": "{{ product.material.name }}",
-  "offers": {
-    "@type": "Offer",
-    "priceCurrency": "INR",
-    "price": "{% if product.pricing_mode == 'FIXED' %}{{ product.base_price }}{% else %}Price on request{% endif %}",
-    "availability": "https://schema.org/InStock",
-    "seller": {"@type": "Organization", "name": "Elorah Jewelry"}
-  }
-}
-</script>
-{% endblock %}
+{% block title %}{{ product.name }} | Elorah Jewellery{% endblock %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto py-10 px-4 flex">
-    <!-- Image Gallery -->
-    <div class="w-1/2 pr-8">
-        {% if product.images.all %}
-            <img src="{{ product.images.first.image.url }}" class="w-full object-cover border" alt="{{ product.name }}">
-            <div class="flex mt-4 space-x-2 overflow-x-auto">
+<div class="bg-brand-header py-4 border-b border-brand-panel text-xs tracking-widest font-sans uppercase">
+    <div class="container mx-auto px-4 flex items-center text-brand-muted">
+        <a href="/" class="hover:text-brand-gold transition">Home</a>
+        <span class="mx-2">/</span>
+        <a href="{% url 'catalog:category-detail' product.category.slug %}" class="hover:text-brand-gold transition">{{ product.category.name }}</a>
+        <span class="mx-2">/</span>
+        <span class="text-brand-dark font-medium">{{ product.name }}</span>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 py-12" x-data="{ mainImage: '{{ product.images.first.image.url }}', qty: 1 }">
+    <div class="flex flex-col lg:flex-row gap-12 max-w-6xl mx-auto">
+        
+        <!-- Gallery -->
+        <div class="w-full lg:w-1/2 flex flex-col md:flex-row gap-4">
+            <div class="order-2 md:order-1 flex md:flex-col gap-4 overflow-x-auto md:overflow-y-auto w-full md:w-20 flex-shrink-0 scrollbar-hide">
                 {% for img in product.images.all %}
-                    <img src="{{ img.thumbnail.url|default:img.image.url }}" class="w-20 h-20 object-cover border cursor-pointer">
+                <button @click="mainImage = '{{ img.image.url }}'" class="w-20 h-24 flex-shrink-0 border border-transparent hover:border-brand-gold focus:border-brand-gold transition">
+                    <img src="{{ img.image.url }}" class="w-full h-full object-cover">
+                </button>
                 {% endfor %}
             </div>
-        {% else %}
-            <div class="w-full h-96 bg-gray-200 flex items-center justify-center text-gray-500">No Image Available</div>
-        {% endif %}
-    </div>
-
-    <!-- Product Info -->
-    <div class="w-1/2">
-        <p class="text-gray-500 text-sm mb-2">
-            <a href="{% url 'catalog:product-list' %}">Catalog</a> &gt; 
-            <a href="{% url 'catalog:category-detail' product.category.slug %}">{{ product.category.name }}</a>
-        </p>
-        <h1 class="text-4xl font-serif text-charcoal-900 mb-2">{{ product.name }}</h1>
-        <p class="text-sm text-gray-500 mb-6">SKU: {{ product.sku }}</p>
-        
-        <div class="text-2xl font-bold text-gold-600 mb-6">
-            {% if product.pricing_mode == 'FIXED' %}
-                ₹{{ product.base_price }}
-            {% else %}
-                Dynamic Price (Calculated based on today's rate)
-            {% endif %}
-        </div>
-
-        <p class="text-lg mb-6">{{ product.short_description }}</p>
-
-        <!-- Variants -->
-        {% if product.variants.exists %}
-        <div class="mb-6">
-            <label class="block font-bold mb-2">Size / Variant:</label>
-            <select class="w-full border p-2 bg-white">
-                {% for variant in product.variants.all %}
-                    <option value="{{ variant.id }}">{{ variant.size }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        {% endif %}
-
-        <!-- Add to Cart (Placeholder form) -->
-        <form method="post" action="{% url 'cart:add' %}" class="mb-8 flex space-x-4">
-            {% csrf_token %}
-            <input type="hidden" name="product_id" value="{{ product.id }}">
-            <input type="number" name="quantity" value="1" min="1" class="w-20 border p-2 text-center">
-            <button type="submit" class="flex-1 bg-charcoal-900 text-white font-bold p-3 hover:bg-gold-600 transition">Add to Cart</button>
-            <button type="button" class="border border-charcoal-900 px-4 flex items-center justify-center hover:bg-gray-50 transition" hx-post="{% url 'wishlist:add' product.id %}" hx-swap="outerHTML">♡ Wishlist</button>
-        </form>
-
-        <!-- Product Specs Tabs -->
-        <div class="border-t pt-6">
-            <h3 class="font-bold text-lg mb-4">Specifications</h3>
-            <table class="w-full text-sm">
-                <tr class="border-b"><td class="py-2 text-gray-600">Material</td><td class="py-2 font-medium">{{ product.material.name }}</td></tr>
-                <tr class="border-b"><td class="py-2 text-gray-600">Purity</td><td class="py-2 font-medium">{{ product.purity.name }}</td></tr>
-                {% if product.gross_weight %}
-                <tr class="border-b"><td class="py-2 text-gray-600">Gross Weight</td><td class="py-2 font-medium">{{ product.gross_weight }} g</td></tr>
+            
+            <div class="order-1 md:order-2 flex-1 relative bg-brand-page aspect-[4/5]">
+                <img :src="mainImage" class="absolute inset-0 w-full h-full object-cover">
+                {% if product.discount_percentage > 0 %}
+                <span class="absolute bottom-4 left-4 bg-brand-gold text-white text-[10px] font-bold uppercase tracking-[0.2em] px-3 py-1.5">Sale</span>
                 {% endif %}
-                {% for attr in product.attributes.all %}
-                <tr class="border-b"><td class="py-2 text-gray-600">{{ attr.name }}</td><td class="py-2 font-medium">{{ attr.value }}</td></tr>
-                {% endfor %}
-            </table>
+            </div>
+        </div>
+        
+        <!-- Info -->
+        <div class="w-full lg:w-1/2 flex flex-col pt-4">
+            <h1 class="text-4xl md:text-5xl font-serif text-brand-dark mb-4">{{ product.name }}</h1>
+            
+            <div class="flex items-center gap-4 mb-6">
+                {% if product.discount_percentage > 0 %}
+                <span class="text-lg line-through text-brand-muted font-sans">Rs. {{ product.compare_at_price|intcomma }}.00</span>
+                {% endif %}
+                <span class="text-2xl font-serif text-brand-gold">
+                    {% if product.pricing_mode == 'FIXED' %}
+                        Rs. {{ product.base_price|intcomma }}.00
+                    {% else %}
+                        Price on Request
+                    {% endif %}
+                </span>
+            </div>
+            
+            <div class="font-sans text-sm text-brand-dark/80 mb-8 leading-relaxed font-light">
+                {{ product.short_description|default:product.description|truncatewords:40 }}
+            </div>
+            
+            <form action="{% url 'cart:add' product.id %}" method="post" class="mb-10">
+                {% csrf_token %}
+                <input type="hidden" name="quantity" :value="qty">
+                
+                {% if product.variants.exists %}
+                <div class="mb-8">
+                    <label class="eyebrow block mb-3 !text-brand-dark">Variant</label>
+                    <div class="flex flex-wrap gap-3">
+                        {% for variant in product.variants.all %}
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="variant_id" value="{{ variant.id }}" class="peer sr-only" {% if forloop.first %}checked{% endif %}>
+                            <span class="border border-brand-panel px-5 py-3 text-sm font-sans hover:border-brand-dark peer-checked:bg-brand-dark peer-checked:text-white peer-checked:border-brand-dark transition">{{ variant.name }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                    <div class="flex border border-brand-dark w-full sm:w-32 h-14">
+                        <button type="button" @click="if(qty > 1) qty--" class="w-10 flex items-center justify-center hover:bg-brand-panel transition">-</button>
+                        <input type="number" x-model="qty" class="w-full text-center focus:outline-none appearance-none font-bold bg-transparent" readonly>
+                        <button type="button" @click="qty++" class="w-10 flex items-center justify-center hover:bg-brand-panel transition">+</button>
+                    </div>
+                    
+                    {% if product.in_stock %}
+                    <button type="submit" class="flex-1 bg-brand-dark text-white font-sans text-xs font-bold uppercase tracking-[0.2em] h-14 hover:bg-brand-gold transition shadow-md">Add to Cart</button>
+                    {% else %}
+                    <button type="button" disabled class="flex-1 bg-gray-200 text-gray-500 font-sans text-xs font-bold uppercase tracking-[0.2em] h-14 cursor-not-allowed">Sold Out</button>
+                    {% endif %}
+                </div>
+                
+                <div class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-brand-panel p-4 z-40 flex gap-4 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+                    {% if product.in_stock %}
+                    <button type="submit" class="w-full bg-brand-dark text-white font-sans text-xs font-bold uppercase tracking-[0.2em] h-14 hover:bg-brand-gold transition shadow-lg">Add to Cart</button>
+                    {% else %}
+                    <button type="button" disabled class="w-full bg-gray-200 text-gray-500 font-sans text-xs font-bold uppercase tracking-[0.2em] h-14 cursor-not-allowed">Sold Out</button>
+                    {% endif %}
+                </div>
+            </form>
+            
+            <div class="bg-brand-page border border-brand-panel p-5 mb-8">
+                <label class="eyebrow block mb-3 !text-brand-dark flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                    Check Delivery
+                </label>
+                <div class="flex">
+                    <input type="text" placeholder="Enter Pincode" class="flex-1 border border-brand-panel bg-white px-4 py-3 text-sm focus:outline-none font-sans">
+                    <button type="button" class="bg-brand-dark text-white px-6 py-3 font-sans text-xs font-bold uppercase tracking-widest">Check</button>
+                </div>
+            </div>
+            
+            <div class="border-t border-brand-panel font-sans">
+                <div x-data="{ open: true }" class="border-b border-brand-panel">
+                    <button @click="open = !open" class="w-full py-5 flex justify-between items-center text-left text-brand-dark font-medium uppercase tracking-widest text-xs">
+                        Product Details
+                        <span x-show="!open">+</span><span x-show="open">-</span>
+                    </button>
+                    <div x-show="open" class="pb-5 text-brand-dark/80 font-light text-sm leading-relaxed prose prose-sm">
+                        {{ product.description|linebreaks }}
+                    </div>
+                </div>
+                <div x-data="{ open: false }" class="border-b border-brand-panel">
+                    <button @click="open = !open" class="w-full py-5 flex justify-between items-center text-left text-brand-dark font-medium uppercase tracking-widest text-xs">
+                        Shipping & Returns
+                        <span x-show="!open">+</span><span x-show="open">-</span>
+                    </button>
+                    <div x-show="open" class="pb-5 text-brand-dark/80 font-light text-sm" style="display: none;">
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li>Free insured shipping across India.</li>
+                            <li>15-Day returns policy.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

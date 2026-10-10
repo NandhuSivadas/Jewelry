@@ -1,0 +1,40 @@
+﻿{% load humanize %}
+<a href="{% url 'catalog:product-detail' product.slug %}" class="group block relative bg-brand-page">
+    <div class="relative aspect-[4/5] overflow-hidden mb-4 bg-gray-50">
+        {% if product.images.first %}
+            <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover transition duration-700 group-hover:scale-105 absolute inset-0 z-10" loading="lazy">
+            {% if product.images.all.1 %}
+                <img src="{{ product.images.all.1.image.url }}" alt="{{ product.name }} Alternate" class="w-full h-full object-cover transition duration-700 opacity-0 group-hover:opacity-100 absolute inset-0 z-20" loading="lazy">
+            {% endif %}
+        {% else %}
+            <div class="w-full h-full flex items-center justify-center text-brand-dark/30 font-serif">Pending</div>
+        {% endif %}
+        
+        <!-- Badge Bottom Left -->
+        <div class="absolute bottom-3 left-3 z-30">
+            {% if not product.in_stock %}
+                <span class="bg-brand-dark text-white text-[10px] px-3 py-1.5 uppercase tracking-[0.1em] rounded-sm">Sold Out</span>
+            {% elif product.discount_percentage > 0 %}
+                <span class="bg-brand-gold text-white text-[10px] px-3 py-1.5 uppercase tracking-[0.1em] rounded-sm">Sale</span>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="text-center px-2">
+        <h3 class="font-serif text-lg text-brand-dark mb-2 group-hover:underline decoration-1 underline-offset-4">{{ product.name }}</h3>
+        
+        <div class="flex items-center justify-center gap-2 font-sans text-sm">
+            {% if product.discount_percentage > 0 %}
+                <span class="text-xs line-through text-brand-muted">Rs. {{ product.compare_at_price|intcomma }}.00</span>
+            {% endif %}
+            <span class="price-format">
+                {% if product.pricing_mode == 'FIXED' %}
+                    Rs. {{ product.base_price|intcomma }}.00
+                {% else %}
+                    Price on Request
+                {% endif %}
+            </span>
+        </div>
+    </div>
+</a>
+

@@ -1,1 +1,50 @@
-﻿
+﻿<!-- _product_card.html -->
+<a href="{% url 'catalog:product-detail' product.slug %}" class="group block relative border border-transparent hover:border-gray-200 transition bg-white pb-4 rounded-sm overflow-hidden">
+    <div class="relative aspect-square overflow-hidden bg-gray-50 mb-3">
+        {% if product.images.first %}
+            <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" class="object-cover w-full h-full transition duration-700 group-hover:scale-105 group-hover:opacity-0 absolute inset-0 z-10" loading="lazy">
+            {% if product.images.all.1 %}
+                <img src="{{ product.images.all.1.image.url }}" alt="{{ product.name }} Alternate" class="object-cover w-full h-full transition duration-700 absolute inset-0 z-0" loading="lazy">
+            {% else %}
+                <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" class="object-cover w-full h-full absolute inset-0 z-0" loading="lazy">
+            {% endif %}
+        {% else %}
+            <div class="w-full h-full flex items-center justify-center text-gray-300">Image Pending</div>
+        {% endif %}
+        
+        <!-- Badges -->
+        <div class="absolute top-2 left-2 z-20 flex flex-col gap-1">
+            {% if product.is_new_arrival %}
+                <span class="bg-charcoal-900 text-white text-[10px] px-2 py-1 uppercase tracking-widest font-medium">New</span>
+            {% endif %}
+            {% if product.discount_percentage > 0 %}
+                <span class="bg-sale-red text-white text-[10px] px-2 py-1 uppercase tracking-widest font-medium">-{{ product.discount_percentage }}%</span>
+            {% endif %}
+        </div>
+        
+        <!-- Out of Stock Overlay -->
+        {% if not product.in_stock %}
+        <div class="absolute inset-0 bg-white bg-opacity-70 z-20 flex items-center justify-center">
+            <span class="text-charcoal-900 font-bold uppercase tracking-wider text-sm border border-charcoal-900 px-4 py-2">Sold Out</span>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="px-2">
+        <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">{{ product.category.name }}</p>
+        <h3 class="font-sans text-sm text-charcoal-900 mb-1 line-clamp-2 leading-tight group-hover:text-gold-600 transition">{{ product.name }}</h3>
+        
+        <div class="flex items-center gap-2 mt-2">
+            <span class="font-bold text-sm text-charcoal-900">
+                {% if product.pricing_mode == 'FIXED' %}
+                    ₹{{ product.base_price }}
+                {% else %}
+                    Price on Request
+                {% endif %}
+            </span>
+            {% if product.discount_percentage > 0 %}
+                <span class="text-xs line-through text-gray-400">₹{{ product.compare_at_price }}</span>
+            {% endif %}
+        </div>
+    </div>
+</a>

@@ -213,10 +213,7 @@ UNFOLD = {
     "SITE_TITLE": "Elorah Jewelry Admin",
     "SITE_HEADER": "Elorah Admin",
     "SITE_URL": "/",
-    "SITE_ICON": {
-        "light": lambda request: "/static/favicon.ico",
-        "dark": lambda request: "/static/favicon.ico",
-    },
+
     "COLORS": {
         "primary": {
             "50": "#FFF9E6",

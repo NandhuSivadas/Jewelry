@@ -1,0 +1,38 @@
+﻿{% load humanize %}
+<a href="{% url 'catalog:product-detail' product.slug %}" class="group block relative bg-white rounded-2xl border border-gray-100 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+    <!-- Top Panel: Tan -->
+    <div class="relative bg-brand-panel aspect-square p-6 flex items-center justify-center">
+        <!-- Badge -->
+        <div class="absolute top-3 left-3 z-20">
+            <span class="bg-black/60 backdrop-blur-sm text-white text-[9px] px-3 py-1.5 uppercase tracking-[0.2em] rounded-full flex items-center gap-1">
+                <span class="text-[8px]">✦</span> {{ product.category.name }}
+            </span>
+        </div>
+        
+        <!-- Image Inset -->
+        {% if product.images.first %}
+            <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" class="w-full h-full object-contain transition duration-700 group-hover:scale-105" loading="lazy">
+        {% else %}
+            <div class="w-full h-full flex items-center justify-center text-brand-dark/30 font-serif">Pending</div>
+        {% endif %}
+    </div>
+    
+    <!-- Body -->
+    <div class="p-5 text-center">
+        <h3 class="font-serif text-lg text-brand-dark mb-2 line-clamp-2 leading-tight">{{ product.name }}</h3>
+        
+        <div class="flex items-center justify-center gap-2 font-sans">
+            <span class="price-format text-sm">
+                {% if product.pricing_mode == 'FIXED' %}
+                    Rs. {{ product.base_price|intcomma }}.00
+                {% else %}
+                    Price on Request
+                {% endif %}
+            </span>
+            {% if product.discount_percentage > 0 %}
+                <span class="text-xs line-through text-brand-muted">Rs. {{ product.compare_at_price|intcomma }}.00</span>
+            {% endif %}
+        </div>
+    </div>
+</a>
+

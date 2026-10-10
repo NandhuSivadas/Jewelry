@@ -1,4 +1,4 @@
-﻿from django.db import models
+from django.db import models
 from django.db.models import Q
 from django.conf import settings
 from apps.core.mixins import TimestampMixin
@@ -55,6 +55,7 @@ class Banner(TimestampMixin):
     subtitle = models.CharField(max_length=300, blank=True)
     image = models.ImageField(upload_to="banners/")
     image_mobile = models.ImageField(upload_to="banners/mobile/", null=True, blank=True)
+    video = models.FileField(upload_to="banners/videos/", null=True, blank=True, help_text="Upload MP4 video for background")
     link_url = models.URLField(blank=True)
     position = models.CharField(max_length=20, choices=Position.choices)
     sort_order = models.PositiveIntegerField(default=0)

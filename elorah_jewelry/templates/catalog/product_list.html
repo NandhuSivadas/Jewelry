@@ -1,69 +1,136 @@
 ﻿{% extends "base.html" %}
-{% block title %}Catalog{% endblock %}
+{% load humanize %}
+
+{% block title %}Shop Collection | Elorah Jewellery{% endblock %}
+
 {% block content %}
-<div class="max-w-6xl mx-auto py-10 px-4 flex">
-    <!-- Sidebar Filters -->
-    <div class="w-1/4 pr-8">
-        <h3 class="text-xl font-serif mb-4">Filters</h3>
-        <form method="get">
-            {{ filterset.form.as_p }}
-            <button type="submit" class="bg-gold-600 text-white p-2 mt-4 w-full">Apply Filters</button>
+<div class="bg-brand-header py-4 border-b border-brand-panel text-xs tracking-widest font-sans uppercase">
+    <div class="container mx-auto px-4 flex items-center text-brand-muted">
+        <a href="/" class="hover:text-brand-gold transition">Home</a>
+        <span class="mx-2">/</span>
+        <span class="text-brand-dark font-medium">{% if category %}{{ category.name }}{% else %}All Jewellery{% endif %}</span>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 py-12" x-data="{ mobileFiltersOpen: false }">
+    <div class="text-center mb-12">
+        <h1 class="text-5xl font-serif text-brand-dark mb-4">{% if category %}{{ category.name }}{% else %}All <span class="italic-gold">Jewellery</span>{% endif %}</h1>
+        <p class="font-sans text-sm tracking-widest uppercase text-brand-muted">{{ page_obj.paginator.count }} pieces</p>
+    </div>
+    
+    <div class="flex justify-between items-center mb-8 border-y border-brand-panel py-4">
+        <button @click="mobileFiltersOpen = true" class="md:hidden flex items-center gap-2 font-sans text-xs tracking-widest uppercase font-bold text-brand-dark">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+            Filter
+        </button>
+        <div class="hidden md:block font-sans text-xs tracking-widest uppercase text-brand-dark">
+            Filter by
+        </div>
+        
+        <form method="get" class="flex items-center gap-2 font-sans text-xs tracking-widest uppercase text-brand-dark">
+            <label>Sort by:</label>
+            {% for key, value in request.GET.items %}
+                {% if key != 'sort' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
+            {% endfor %}
+            <select name="sort" onchange="this.form.submit()" class="bg-transparent border-none focus:outline-none cursor-pointer font-bold">
+                <option value="">Recommended</option>
+                <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>Newest</option>
+            </select>
         </form>
     </div>
 
-    <!-- Product Grid -->
-    <div class="w-3/4">
-        {% if search_query %}
-            <h2 class="text-3xl font-serif mb-6">Search Results for "{{ search_query }}"</h2>
-        {% elif current_category %}
-            <h2 class="text-3xl font-serif mb-6">{{ current_category.name }}</h2>
-        {% else %}
-            <h2 class="text-3xl font-serif mb-6">All Jewelry</h2>
-        {% endif %}
+    <div class="flex flex-col md:flex-row gap-10">
+        <!-- Sidebar Filters -->
+        <aside class="hidden md:block w-64 flex-shrink-0 font-sans" :class="mobileFiltersOpen ? '!block fixed inset-0 z-50 bg-brand-page p-6 overflow-y-auto' : ''">
+            <div class="md:hidden flex justify-between items-center mb-8 pb-4 border-b border-brand-panel" x-show="mobileFiltersOpen">
+                <span class="font-serif text-2xl">Filters</span>
+                <button @click="mobileFiltersOpen = false" type="button"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
+            
+            <form method="get" class="space-y-8 sticky top-[120px]">
+                {% if request.GET.sort %}<input type="hidden" name="sort" value="{{ request.GET.sort }}">{% endif %}
+                
+                <div class="border-b border-brand-panel pb-6">
+                    <h3 class="eyebrow mb-4 !text-brand-dark">Category</h3>
+                    <div class="space-y-3 max-h-48 overflow-y-auto pr-2">
+                        {% for cat in categories %}
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" name="category" value="{{ cat.slug }}" class="accent-brand-gold w-4 h-4 rounded-sm border-gray-300" {% if cat.slug in request.GET.category %}checked{% endif %} onchange="this.form.submit()">
+                            <span class="text-sm text-brand-muted group-hover:text-brand-dark transition">{{ cat.name }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="border-b border-brand-panel pb-6">
+                    <h3 class="eyebrow mb-4 !text-brand-dark">Price</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="radio" name="max_price" value="499" class="accent-brand-gold w-4 h-4" {% if request.GET.max_price == '499' %}checked{% endif %} onchange="this.form.submit()">
+                            <span class="text-sm text-brand-muted group-hover:text-brand-dark transition">Under ₹499</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="radio" name="max_price" value="999" class="accent-brand-gold w-4 h-4" {% if request.GET.max_price == '999' %}checked{% endif %} onchange="this.form.submit()">
+                            <span class="text-sm text-brand-muted group-hover:text-brand-dark transition">Under ₹999</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="pb-6">
+                    <h3 class="eyebrow mb-4 !text-brand-dark">Availability</h3>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" name="in_stock" value="true" class="accent-brand-gold w-4 h-4" {% if request.GET.in_stock %}checked{% endif %} onchange="this.form.submit()">
+                        <span class="text-sm text-brand-muted group-hover:text-brand-dark transition">In Stock Only</span>
+                    </label>
+                </div>
+                
+                <div class="flex gap-4">
+                    <a href="{% url 'catalog:product-list' %}" class="w-full text-center border border-brand-dark py-3 text-xs tracking-widest uppercase font-bold hover:bg-brand-dark hover:text-white transition">Clear</a>
+                    <button type="button" @click="mobileFiltersOpen = false" class="md:hidden w-full text-center bg-brand-dark text-white py-3 text-xs tracking-widest uppercase font-bold">Apply</button>
+                </div>
+            </form>
+        </aside>
 
-        <div class="grid grid-cols-3 gap-6">
-            {% for product in products %}
-            <div class="border border-gray-200 p-4 relative group">
-                {% if product.discount_percentage > 0 %}
-                    <span class="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1">{{ product.discount_percentage }}% OFF</span>
-                {% endif %}
+        <!-- Product Grid -->
+        <div class="flex-1 max-w-[1145px]">
+            {% if object_list %}
+                <!-- 4 Columns -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-12">
+                    {% for product in object_list %}
+                        {% include "catalog/partials/_product_card_b.html" with product=product %}
+                    {% endfor %}
+                </div>
                 
-                <a href="{% url 'catalog:product-detail' product.slug %}">
-                    {% if product.images.first %}
-                    <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" class="w-full h-48 object-cover mb-4">
-                    {% else %}
-                    <div class="w-full h-48 bg-gray-200 mb-4 flex items-center justify-center text-gray-500">No Image</div>
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <div class="mt-20 border-t border-brand-panel pt-8 flex justify-center items-center gap-2 font-serif text-lg">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}" class="w-10 h-10 flex items-center justify-center hover:text-brand-gold transition">‹</a>
                     {% endif %}
-                </a>
-                
-                <h3 class="font-serif text-lg"><a href="{% url 'catalog:product-detail' product.slug %}">{{ product.name }}</a></h3>
-                <p class="text-sm text-gray-500">{{ product.category.name }}</p>
-                <div class="mt-2 font-bold text-gold-600">
-                    <!-- Price placeholder. Actual dynamic calculation usually rendered via a template tag or pre-calculated in queryset -->
-                    {% if product.pricing_mode == 'FIXED' %}
-                        ₹{{ product.base_price }}
-                    {% else %}
-                        View Price inside
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <span class="w-10 h-10 flex items-center justify-center border-b border-brand-dark font-bold">{{ num }}</span>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <a href="?page={{ num }}" class="w-10 h-10 flex items-center justify-center hover:text-brand-gold transition">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" class="w-10 h-10 flex items-center justify-center hover:text-brand-gold transition">›</a>
                     {% endif %}
                 </div>
-            </div>
-            {% empty %}
-            <p>No products found matching your criteria.</p>
-            {% endfor %}
-        </div>
-
-        <!-- Pagination -->
-        {% if is_paginated %}
-        <div class="mt-8 flex justify-center space-x-2">
-            {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 border">&laquo; Prev</a>
-            {% endif %}
-            <span class="px-4 py-2 bg-gold-600 text-white">{{ page_obj.number }}</span>
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 border">Next &raquo;</a>
+                {% endif %}
+            {% else %}
+                <div class="py-24 text-center">
+                    <h3 class="text-3xl font-serif text-brand-dark mb-4">No pieces found</h3>
+                    <p class="font-sans text-brand-muted mb-8">Try adjusting your filters.</p>
+                    <a href="{% url 'catalog:product-list' %}" class="bg-brand-dark text-white font-sans uppercase tracking-[0.2em] text-xs font-bold py-4 px-10 hover:bg-brand-gold transition">Clear Filters</a>
+                </div>
             {% endif %}
         </div>
-        {% endif %}
     </div>
 </div>
 {% endblock %}

@@ -10,6 +10,10 @@ urlpatterns = [
     path(f"{settings.WEBHOOK_URL_PREFIX}/", include("config.urls.webhooks")),
 ]
 
+from django.conf.urls.static import static
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 # Error handlers
 handler400 = "apps.core.views.error_400"
 handler403 = "apps.core.views.error_403"

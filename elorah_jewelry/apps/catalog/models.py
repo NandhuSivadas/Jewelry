@@ -1,4 +1,4 @@
-﻿from django.db import models
+from django.db import models
 from django.db.models import Q, F
 from mptt.models import MPTTModel, TreeForeignKey
 from apps.core.mixins import TimestampMixin, SlugMixin
@@ -22,6 +22,9 @@ class Category(MPTTModel, TimestampMixin):
 
     class MPTTMeta:
         order_insertion_by = ["sort_order", "name"]
+
+    class Meta:
+        verbose_name_plural = "Categories"
 
     def __str__(self):
         return self.name

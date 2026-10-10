@@ -1,0 +1,53 @@
+﻿<div x-data="{ helpOpen: false }" class="fixed bottom-6 right-6 z-50">
+    <button @click="helpOpen = !helpOpen" class="bg-brand-dark text-white rounded-full w-14 h-14 shadow-lg shadow-black/20 hover:scale-105 transition transform flex items-center justify-center ring-4 ring-brand-page">
+        <svg x-show="!helpOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+        <svg x-show="helpOpen" style="display: none;" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+    
+    <div x-show="helpOpen" 
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+         x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+         x-transition:leave-end="opacity-0 translate-y-4 scale-95"
+         class="absolute bottom-20 right-0 w-[335px] bg-brand-dark text-white shadow-2xl rounded-2xl overflow-hidden flex flex-col" style="display: none;">
+        
+        <div class="p-6 pb-4">
+            <h4 class="font-serif text-2xl mb-1">How can we help?</h4>
+            <p class="text-sm text-gray-300 font-sans">Tap a question to see the answer.</p>
+        </div>
+        
+        <div class="px-6 mb-4">
+            <a href="#" class="w-full bg-white/10 hover:bg-white/20 transition rounded-lg p-4 flex justify-between items-center text-sm font-medium font-sans">
+                Track my order
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </a>
+        </div>
+        
+        <div class="bg-white text-brand-dark p-2 m-2 rounded-xl h-64 overflow-y-auto">
+            <div x-data="{ active: null }" class="text-sm font-sans divide-y divide-gray-100">
+                <template x-for="(faq, index) in [
+                    { q: 'Delivery time?', a: 'Standard delivery takes 3-7 business days across India.' },
+                    { q: 'Shipping coverage?', a: 'We ship across India. International shipping is available on request.' },
+                    { q: 'Real diamond vs AD stone/tarnish?', a: 'AD stones simulate the brilliance of real diamonds. They are tarnish-resistant with proper care.' },
+                    { q: 'Jewellery care?', a: 'Keep away from perfume, water, and harsh chemicals. Store in a zip-lock pouch.' },
+                    { q: 'Payment options?', a: 'We accept UPI, Credit/Debit cards, Netbanking, and major wallets.' }
+                ]">
+                    <div class="p-4">
+                        <button @click="active = active === index ? null : index" class="w-full text-left font-medium flex justify-between items-center group">
+                            <span :class="active === index ? 'text-brand-gold' : 'group-hover:text-brand-gold'" x-text="faq.q"></span>
+                            <span x-show="active !== index" class="text-brand-muted">+</span>
+                            <span x-show="active === index" class="text-brand-gold">-</span>
+                        </button>
+                        <p x-show="active === index" class="mt-3 text-brand-muted leading-relaxed" x-text="faq.a" style="display:none;"></p>
+                    </div>
+                </template>
+            </div>
+        </div>
+        
+        <div class="p-4 text-center text-xs text-gray-400 font-sans">
+            To order, just add to cart & check out — quick and secure.
+        </div>
+    </div>
+</div>

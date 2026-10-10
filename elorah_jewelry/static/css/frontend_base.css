@@ -1,0 +1,111 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap');
+
+:root {
+  --color-page-bg: #FAF7F0;
+  --color-header-bg: rgba(247, 239, 227, 0.85); /* #F7EFE3 with opacity for blur */
+  --color-header-solid: #F7EFE3;
+  --color-footer-band: #F2E8DA;
+  --color-panel-tan: #EDE2D0;
+  --color-accent-gold: #A8803A;
+  --color-text-dark: #1E1915;
+  --color-text-muted: #7A746E;
+  
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-sans: 'Jost', sans-serif;
+  
+  --header-height: 88px;
+  --header-height-scrolled: 64px;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text-dark);
+  background-color: var(--color-page-bg);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, .font-serif {
+  font-family: var(--font-serif);
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--color-accent-gold);
+  font-weight: 500;
+}
+
+.italic-gold {
+  font-style: italic;
+  color: var(--color-accent-gold);
+}
+
+/* Animations */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: 200%;
+  animation: marquee 35s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+    overflow-x: auto;
+    width: 100%;
+  }
+}
+
+/* Scroll Snap */
+.scroll-snap-x {
+  scroll-snap-type: x mandatory;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.scroll-snap-x::-webkit-scrollbar {
+  display: none;
+}
+.snap-center-card {
+  scroll-snap-align: center;
+}
+.snap-start-card {
+  scroll-snap-align: start;
+}
+
+/* Intersection Observer Reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+}
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Header transitions */
+header {
+  transition: height 0.3s ease, background-color 0.3s ease, backdrop-filter 0.3s ease;
+}
+header.scrolled {
+  height: var(--header-height-scrolled);
+  background-color: var(--color-header-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Typography utilities */
+.price-format {
+  font-weight: 600;
+  color: var(--color-accent-gold);
+}

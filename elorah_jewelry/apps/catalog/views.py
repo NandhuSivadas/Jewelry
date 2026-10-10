@@ -1,32 +1,64 @@
-﻿from django.shortcuts import render, get_object_or_404, redirect
-from django.views import View
-from .models import Product, Category, SlugRedirect
+﻿from django.shortcuts import render, get_object_or_404
+from django.views.generic import ListView, DetailView
+from .models import Product, Category
 from .filters import ProductFilter
 
-class ProductDetailView(View):
-    def get(self, request, slug):
-        try:
-            product = Product.objects.select_related('category', 'material', 'purity').get(slug=slug, is_active=True)
-            return render(request, "catalog/product_detail.html", {"product": product})
-        except Product.DoesNotExist:
-            redirect_obj = SlugRedirect.objects.filter(old_slug=slug).order_by('-created_at').first()
-            if redirect_obj:
-                return redirect('catalog:product-detail', slug=redirect_obj.new_slug, permanent=True)
-            return render(request, "404.html", status=404)
+class ProductListView(ListView):
+    model = Product
+    template_name = "catalog/product_list.html"
+    context_object_name = "object_list"
+    paginate_by = 12
 
-class ProductListView(View):
-    def get(self, request):
-        f = ProductFilter(request.GET, queryset=Product.objects.filter(is_active=True))
-        return render(request, "catalog/product_list.html", {"products": f.qs, "filterset": f})
+    def get_queryset(self):
+        qs = Product.objects.filter(is_active=True).prefetch_related('images', 'category')
+        
+        # Sort logic
+        sort = self.request.GET.get('sort')
+        if sort == 'price_asc':
+            qs = qs.order_by('base_price')
+        elif sort == 'price_desc':
+            qs = qs.order_by('-base_price')
+        elif sort == 'newest':
+            qs = qs.order_by('-created_at')
+            
+        # Apply filters
+        self.filterset = ProductFilter(self.request.GET, queryset=qs)
+        return self.filterset.qs
 
-class ProductSearchView(View):
-    def get(self, request):
-        query = request.GET.get('q', '')
-        products = Product.objects.filter(name__icontains=query, is_active=True) if query else Product.objects.none()
-        return render(request, "catalog/product_list.html", {"products": products, "search_query": query})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filterset'] = self.filterset
+        context['categories'] = Category.objects.filter(is_active=True)
+        return context
 
-class CategoryDetailView(View):
-    def get(self, request, slug):
-        category = get_object_or_404(Category, slug=slug, is_active=True)
-        products = Product.objects.filter(category=category, is_active=True)
-        return render(request, "catalog/product_list.html", {"products": products, "current_category": category})
+class CategoryDetailView(ProductListView):
+    def get_queryset(self):
+        self.category = get_object_or_404(Category, slug=self.kwargs['slug'], is_active=True)
+        qs = super().get_queryset().filter(category=self.category)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = self.category
+        return context
+
+class ProductSearchView(ProductListView):
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')
+        qs = super().get_queryset()
+        if query:
+            qs = qs.filter(name__icontains=query)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_query'] = self.request.GET.get('q', '')
+        return context
+
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = "catalog/product_detail.html"
+    context_object_name = "product"
+
+    def get_queryset(self):
+        return Product.objects.filter(is_active=True).prefetch_related('images', 'variants', 'attributes')

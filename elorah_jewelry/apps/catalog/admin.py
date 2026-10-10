@@ -1,15 +1,20 @@
-﻿from django.contrib import admin
+from django.contrib import admin
 from unfold.admin import ModelAdmin as UnfoldModelAdmin, TabularInline, StackedInline
-from mptt.admin import MPTTModelAdmin
 from .models import (
     Category, Material, Purity, Product, ProductVariant,
     ProductImage, ProductAttribute, StockRecord
 )
 
-class CategoryAdmin(MPTTModelAdmin):
+class CategoryAdmin(UnfoldModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
     list_display = ["name", "is_active", "sort_order"]
     list_editable = ["is_active", "sort_order"]
+
+class MaterialAdmin(UnfoldModelAdmin):
+    list_display = ["name"]
+
+class PurityAdmin(UnfoldModelAdmin):
+    list_display = ["name", "material", "is_active"]
 
 class ProductImageInline(TabularInline):
     model = ProductImage
@@ -54,6 +59,6 @@ class ProductAdmin(UnfoldModelAdmin):
     )
 
 admin.site.register(Category, CategoryAdmin)
-admin.site.register(Material)
-admin.site.register(Purity)
+admin.site.register(Material, MaterialAdmin)
+admin.site.register(Purity, PurityAdmin)
 admin.site.register(Product, ProductAdmin)
