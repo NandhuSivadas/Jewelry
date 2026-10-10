@@ -1,4 +1,5 @@
 ﻿from django.contrib import admin
+from unfold.admin import ModelAdmin as UnfoldModelAdmin, TabularInline, StackedInline
 
 class ElorahAdminSite(admin.AdminSite):
     site_header = "Elorah Jewelry Administration"

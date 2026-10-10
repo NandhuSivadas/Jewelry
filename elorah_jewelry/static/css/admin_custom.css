@@ -1,0 +1,35 @@
+﻿/* Custom Admin Sidebar Group Headings */
+#sidebar nav .group-header,
+#sidebar nav .font-semibold {
+    font-size: 0.85rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #DAA520 !important; /* Elorah Gold */
+    border-bottom: 1px solid rgba(218, 165, 32, 0.3) !important;
+    padding-bottom: 0.5rem !important;
+    margin-top: 1.5rem !important;
+    margin-bottom: 0.75rem !important;
+    opacity: 0.9;
+}
+
+/* Make sure the first item doesn't have too much top margin */
+#sidebar nav > div:first-child .group-header,
+#sidebar nav > div:first-child .font-semibold {
+    margin-top: 0.5rem !important;
+}
+
+/* Ivory Background for light mode, slightly warmer dark mode */
+html:not(.dark) body {
+    background-color: #FFFFF0 !important;
+}
+
+/* Fix Action Dropdown Option Text Visibility */
+select option {
+    background-color: #ffffff !important;
+    color: #1f1f1f !important;
+}
+
+.dark select option {
+    background-color: #1f1f1f !important;
+    color: #ffffff !important;
+}

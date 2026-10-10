@@ -1,4 +1,5 @@
 ﻿from django.contrib import admin
+from unfold.admin import ModelAdmin as UnfoldModelAdmin, TabularInline, StackedInline
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser, UserProfile, Address
 

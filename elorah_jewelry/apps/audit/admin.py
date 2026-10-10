@@ -1,7 +1,8 @@
 ﻿from django.contrib import admin
+from unfold.admin import ModelAdmin as UnfoldModelAdmin, TabularInline, StackedInline
 from .models import AuditLog
 
-class AuditLogAdmin(admin.ModelAdmin):
+class AuditLogAdmin(UnfoldModelAdmin):
     list_display = ["timestamp", "actor_email", "action", "category", "target_repr", "severity", "ip_address"]
     list_filter = ["category", "severity", "action"]
     search_fields = ["actor_email", "target_repr", "ip_address"]

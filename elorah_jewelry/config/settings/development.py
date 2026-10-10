@@ -21,3 +21,9 @@ CACHES = {
         "LOCATION": "elorah-local-cache",
     }
 }
+
+# Relax CSP for local development to allow CDNs (Tailwind, HTMX, Alpine) and inline scripts
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.tailwindcss.com", "https://unpkg.com", "https://cdn.jsdelivr.net")
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://fonts.googleapis.com")
+CSP_IMG_SRC = ("'self'", "data:", "https://via.placeholder.com")
+CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com")

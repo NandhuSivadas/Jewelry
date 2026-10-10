@@ -23,13 +23,12 @@
       }
     </script>
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
-    <!-- Alpine.js for interactive UI elements -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
     {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-ivory-50 text-charcoal-900 font-sans flex flex-col min-h-screen">
     <header class="bg-white shadow-sm sticky top-0 z-50">
-        <nav class="container mx-auto px-4 py-4 flex justify-between items-center" x-data="{ mobileMenuOpen: false }">
+        <nav class="container mx-auto px-4 py-4 flex justify-between items-center" x-data="{ mobileMenuOpen: false, searchOpen: false }">
             <!-- Logo -->
             <a href="/" class="text-2xl font-serif font-bold text-gold-600 tracking-wider">
                 ELORAH
@@ -37,22 +36,21 @@
             
             <!-- Desktop Nav -->
             <div class="hidden md:flex space-x-8 items-center">
-                <a href="{% url 'catalog:product-list' %}" class="hover:text-gold-500 transition">Shop All</a>
-                <a href="/category/rings/" class="hover:text-gold-500 transition">Rings</a>
-                <a href="/category/necklaces/" class="hover:text-gold-500 transition">Necklaces</a>
-                <a href="/category/earrings/" class="hover:text-gold-500 transition">Earrings</a>
+                <a href="{% url 'catalog:product-list' %}" class="hover:text-gold-500 transition font-bold uppercase tracking-widest text-sm">Shop All</a>
             </div>
 
             <!-- Icons -->
-            <div class="flex items-center space-x-6">
+            <div class="flex items-center space-x-6 relative">
                 <!-- Search -->
-                <button class="text-gray-600 hover:text-gold-600">
+                <button @click="searchOpen = !searchOpen" class="text-gray-600 hover:text-gold-600">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </button>
+                
                 <!-- Account -->
-                <a href="#" class="text-gray-600 hover:text-gold-600">
+                <a href="{% if user.is_authenticated %}{% url 'accounts:dashboard' %}{% else %}{% url 'accounts:login' %}{% endif %}" class="text-gray-600 hover:text-gold-600">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 </a>
+                
                 <!-- Cart -->
                 <a href="{% url 'cart:detail' %}" class="text-gray-600 hover:text-gold-600 relative">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
@@ -65,13 +63,19 @@
                 <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-gray-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
+
+                <!-- Search Dropdown -->
+                <div x-show="searchOpen" @click.away="searchOpen = false" class="absolute top-full right-0 mt-4 w-72 bg-white shadow-xl border border-gray-100 p-4 z-50" style="display: none;">
+                    <form action="{% url 'catalog:product-search' %}" method="get" class="flex border border-gray-300">
+                        <input type="text" name="q" placeholder="Search jewelry..." class="w-full px-3 py-2 focus:outline-none" required>
+                        <button type="submit" class="bg-charcoal-900 text-white px-3 hover:bg-gold-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+                    </form>
+                </div>
             </div>
             
             <!-- Mobile Menu Dropdown -->
             <div x-show="mobileMenuOpen" class="absolute top-full left-0 w-full bg-white shadow-md md:hidden flex flex-col p-4 space-y-4" style="display: none;">
-                <a href="{% url 'catalog:product-list' %}" class="hover:text-gold-500">Shop All</a>
-                <a href="/category/rings/" class="hover:text-gold-500">Rings</a>
-                <a href="/category/necklaces/" class="hover:text-gold-500">Necklaces</a>
+                <a href="{% url 'catalog:product-list' %}" class="hover:text-gold-500 font-bold uppercase tracking-widest text-sm">Shop All</a>
             </div>
         </nav>
     </header>
@@ -100,10 +104,7 @@
                 <div>
                     <h4 class="font-bold mb-4">Shop</h4>
                     <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-gold-500">All Jewelry</a></li>
-                        <li><a href="#" class="hover:text-gold-500">Engagement Rings</a></li>
-                        <li><a href="#" class="hover:text-gold-500">Necklaces</a></li>
-                        <li><a href="#" class="hover:text-gold-500">New Arrivals</a></li>
+                        <li><a href="{% url 'catalog:product-list' %}" class="hover:text-gold-500">All Jewelry</a></li>
                     </ul>
                 </div>
                 <div>
@@ -111,7 +112,6 @@
                     <ul class="space-y-2 text-sm text-gray-400">
                         <li><a href="#" class="hover:text-gold-500">Contact Us</a></li>
                         <li><a href="#" class="hover:text-gold-500">Shipping & Returns</a></li>
-                        <li><a href="#" class="hover:text-gold-500">Ring Size Guide</a></li>
                         <li><a href="#" class="hover:text-gold-500">FAQ</a></li>
                     </ul>
                 </div>

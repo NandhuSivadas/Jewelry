@@ -1,4 +1,5 @@
 ﻿from django.contrib import admin
+from unfold.admin import ModelAdmin as UnfoldModelAdmin, TabularInline, StackedInline
 from mptt.admin import MPTTModelAdmin
 from .models import (
     Category, Material, Purity, Product, ProductVariant,
@@ -10,23 +11,23 @@ class CategoryAdmin(MPTTModelAdmin):
     list_display = ["name", "is_active", "sort_order"]
     list_editable = ["is_active", "sort_order"]
 
-class ProductImageInline(admin.TabularInline):
+class ProductImageInline(TabularInline):
     model = ProductImage
     extra = 1
 
-class ProductVariantInline(admin.TabularInline):
+class ProductVariantInline(TabularInline):
     model = ProductVariant
     extra = 0
 
-class ProductAttributeInline(admin.TabularInline):
+class ProductAttributeInline(TabularInline):
     model = ProductAttribute
     extra = 1
 
-class StockRecordInline(admin.StackedInline):
+class StockRecordInline(StackedInline):
     model = StockRecord
     extra = 0
 
-class ProductAdmin(admin.ModelAdmin):
+class ProductAdmin(UnfoldModelAdmin):
     list_display = ["name", "sku", "category", "pricing_mode", "is_active", "is_featured"]
     list_filter = ["is_active", "is_featured", "pricing_mode", "category", "material"]
     search_fields = ["name", "sku", "short_description"]

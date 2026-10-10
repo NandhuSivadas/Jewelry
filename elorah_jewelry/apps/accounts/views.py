@@ -1,4 +1,4 @@
-﻿from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import ListView, UpdateView, CreateView
 from django.contrib.auth import login, logout, authenticate
@@ -30,7 +30,7 @@ class RegisterView(View):
                     last_name=form.cleaned_data['last_name'],
                     phone=form.cleaned_data.get('phone')
                 )
-                login(request, user)
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 messages.success(request, "Registration successful! Please verify your email.")
                 
                 # Safe redirect handling

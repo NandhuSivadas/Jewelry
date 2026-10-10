@@ -23,6 +23,7 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
 INSTALLED_APPS = [
+    "unfold",
     # Django built-in
     "django.contrib.admin",
     "django.contrib.auth",
@@ -206,4 +207,35 @@ LOGGING = {
             "level": "INFO",
         },
     },
+}
+
+UNFOLD = {
+    "SITE_TITLE": "Elorah Jewelry Admin",
+    "SITE_HEADER": "Elorah Admin",
+    "SITE_URL": "/",
+    "SITE_ICON": {
+        "light": lambda request: "/static/favicon.ico",
+        "dark": lambda request: "/static/favicon.ico",
+    },
+    "COLORS": {
+        "primary": {
+            "50": "#FFF9E6",
+            "100": "#FFF0B3",
+            "200": "#FFE066",
+            "300": "#FFD700",
+            "400": "#DAA520",
+            "500": "#B8860B",
+            "600": "#996515",
+            "700": "#7A4F0E",
+            "800": "#5C3A08",
+            "900": "#3D2605",
+        },
+    },
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+    },
+    "STYLES": [
+        lambda request: "/static/css/admin_custom.css",
+    ],
 }

@@ -1,7 +1,8 @@
 ﻿from django.contrib import admin
+from unfold.admin import ModelAdmin as UnfoldModelAdmin, TabularInline, StackedInline
 from .models import Review
 
-class ReviewAdmin(admin.ModelAdmin):
+class ReviewAdmin(UnfoldModelAdmin):
     list_display = ["product", "user", "rating", "is_verified_purchase", "is_approved", "created_at"]
     list_filter = ["is_approved", "is_verified_purchase", "rating"]
     actions = ["approve_reviews", "reject_reviews"]
