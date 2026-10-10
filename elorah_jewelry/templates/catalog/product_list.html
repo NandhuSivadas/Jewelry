@@ -13,7 +13,7 @@
 </div>
 
 <div class="container mx-auto px-4 py-12" x-data="{ mobileFiltersOpen: false }">
-    <div class="text-center mb-12">
+    <div class="text-center mb-12 reveal-blur">
         <h1 class="text-5xl font-serif text-brand-dark mb-4">{% if category %}{{ category.name }}{% else %}All <span class="italic-gold">Jewellery</span>{% endif %}</h1>
         <p class="font-sans text-sm tracking-widest uppercase text-brand-muted">{{ page_obj.paginator.count }} pieces</p>
     </div>
@@ -43,7 +43,7 @@
 
     <div class="flex flex-col md:flex-row gap-10">
         <!-- Sidebar Filters -->
-        <aside class="hidden md:block w-64 flex-shrink-0 font-sans" :class="mobileFiltersOpen ? '!block fixed inset-0 z-50 bg-brand-page p-6 overflow-y-auto' : ''">
+        <aside class="hidden md:block w-64 flex-shrink-0 font-sans reveal-left" :class="mobileFiltersOpen ? '!block fixed inset-0 z-50 bg-brand-page p-6 overflow-y-auto' : ''">
             <div class="md:hidden flex justify-between items-center mb-8 pb-4 border-b border-brand-panel" x-show="mobileFiltersOpen">
                 <span class="font-serif text-2xl">Filters</span>
                 <button @click="mobileFiltersOpen = false" type="button"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg></button>
@@ -134,3 +134,4 @@
     </div>
 </div>
 {% endblock %}
+

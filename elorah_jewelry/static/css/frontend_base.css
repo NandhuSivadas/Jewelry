@@ -2,7 +2,7 @@
 
 :root {
   --color-page-bg: #FAF7F0;
-  --color-header-bg: rgba(247, 239, 227, 0.85); /* #F7EFE3 with opacity for blur */
+  --color-header-bg: rgba(247, 239, 227, 0.75); /* More transparent for stronger blur */
   --color-header-solid: #F7EFE3;
   --color-footer-band: #F2E8DA;
   --color-panel-tan: #EDE2D0;
@@ -14,7 +14,11 @@
   --font-sans: 'Jost', sans-serif;
   
   --header-height: 88px;
-  --header-height-scrolled: 64px;
+  --header-height-scrolled: 70px;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -42,6 +46,47 @@ h1, h2, h3, h4, h5, h6, .font-serif {
   color: var(--color-accent-gold);
 }
 
+/* Luxury Link Hover Underline */
+.hover-underline {
+  display: inline-block;
+  position: relative;
+}
+.hover-underline::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  background-color: currentColor;
+  transform-origin: bottom right;
+  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.hover-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* Image Zoom Wrapper */
+.img-zoom-wrapper {
+  overflow: hidden;
+}
+.img-zoom-wrapper img {
+  transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.img-zoom-wrapper:hover img {
+  transform: scale(1.08);
+}
+
+/* Glassmorphism Panels */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
 /* Animations */
 @keyframes marquee {
   0% { transform: translateX(0); }
@@ -58,12 +103,53 @@ h1, h2, h3, h4, h5, h6, .font-serif {
   animation-play-state: paused;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .animate-marquee {
-    animation: none;
-    overflow-x: auto;
-    width: 100%;
-  }
+/* Advanced Reveals */
+.reveal, .reveal-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.reveal-blur {
+  opacity: 0;
+  filter: blur(12px);
+  transform: translateY(20px) scale(0.95);
+  transition: all 1.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.reveal-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.reveal.active, .reveal-up.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-blur.active {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0) scale(1);
+}
+.reveal-left.active, .reveal-right.active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Header transitions */
+header {
+  transition: height 0.4s cubic-bezier(0.19, 1, 0.22, 1), background-color 0.4s ease, box-shadow 0.4s ease;
+}
+header.scrolled {
+  height: var(--header-height-scrolled);
+  background-color: var(--color-header-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
 }
 
 /* Scroll Snap */
@@ -80,32 +166,4 @@ h1, h2, h3, h4, h5, h6, .font-serif {
 }
 .snap-start-card {
   scroll-snap-align: start;
-}
-
-/* Intersection Observer Reveal */
-.reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
-}
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Header transitions */
-header {
-  transition: height 0.3s ease, background-color 0.3s ease, backdrop-filter 0.3s ease;
-}
-header.scrolled {
-  height: var(--header-height-scrolled);
-  background-color: var(--color-header-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-/* Typography utilities */
-.price-format {
-  font-weight: 600;
-  color: var(--color-accent-gold);
 }

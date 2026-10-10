@@ -30,12 +30,9 @@ class RegisterView(View):
                     last_name=form.cleaned_data['last_name'],
                     phone=form.cleaned_data.get('phone')
                 )
-                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-                messages.success(request, "Registration successful! Please verify your email.")
-                
-                # Safe redirect handling
-                next_url = request.POST.get('next', '/')
-                return redirect(safe_redirect_url(next_url, allowed_hosts={request.get_host()}))
+                # Removed auto-login. Redirect to login.
+                messages.success(request, "Registration successful! Please sign in to continue.")
+                return redirect('accounts:login')
             except ValidationError as e:
                 form.add_error(None, e.message)
         
@@ -43,7 +40,7 @@ class RegisterView(View):
 
     def get(self, request):
         if request.user.is_authenticated:
-            return redirect('/')
+            return redirect('accounts:dashboard')
         return render(request, "accounts/register.html", {"form": RegisterForm()})
 
 class LoginView(View):
@@ -56,23 +53,22 @@ class LoginView(View):
             
             if user is not None:
                 login(request, user)
-                # Django automatically cycles session key on login for security
                 
-                # Check verification but allow login
                 if not user.is_email_verified:
                     messages.warning(request, "Please verify your email address to access all features.")
                 
-                next_url = request.POST.get('next', '/')
-                return redirect(safe_redirect_url(next_url, allowed_hosts={request.get_host()}))
+                next_url = request.POST.get('next')
+                if next_url and next_url != '/':
+                    return redirect(safe_redirect_url(next_url, allowed_hosts={request.get_host()}))
+                return redirect('accounts:dashboard')
             else:
-                # Same generic message for invalid email or invalid password
                 form.add_error(None, "Invalid email or password.")
                 
         return render(request, "accounts/login.html", {"form": form})
 
     def get(self, request):
         if request.user.is_authenticated:
-            return redirect('/')
+            return redirect('accounts:dashboard')
         return render(request, "accounts/login.html", {"form": LoginForm()})
 
 class LogoutView(LoginRequiredMixin, View):
@@ -203,7 +199,15 @@ class SetDefaultAddressView(LoginRequiredMixin, View):
 
 class DashboardView(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request, "accounts/dashboard.html", {})
+        # We assume orders app exists and uses Order model related to user
+        from apps.orders.models import Order
+        recent_orders = Order.objects.filter(user=request.user).order_by('-created_at')[:3]
+        address_count = request.user.addresses.count()
+        
+        return render(request, "accounts/dashboard.html", {
+            "recent_orders": recent_orders,
+            "address_count": address_count
+        })
 
 class OrderHistoryView(LoginRequiredMixin, View):
     def get(self, request):

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% load static %}
 
 {% block title %}Elorah Jewellery | Wear Timeless Elegance{% endblock %}
@@ -8,14 +8,14 @@
 <section class="relative h-[85vh] min-h-[600px] w-full overflow-hidden flex items-center justify-center">
     <div class="absolute inset-0 w-full h-full bg-black">
         {% if hero_banners and hero_banners.0.video %}
-        <video autoplay muted loop playsinline class="w-full h-full object-cover opacity-80">
+        <video autoplay muted loop playsinline class="w-full h-full object-cover opacity-80 parallax-media">
             <source src="{{ hero_banners.0.video.url }}" type="video/mp4">
         </video>
         {% elif hero_banners and hero_banners.0.image %}
-        <img src="{{ hero_banners.0.image.url }}" class="w-full h-full object-cover opacity-80">
+        <img src="{{ hero_banners.0.image.url }}" class="w-full h-full object-cover opacity-80 parallax-media">
         {% else %}
         <!-- Placeholder -->
-        <video autoplay muted loop playsinline class="w-full h-full object-cover opacity-80">
+        <video autoplay muted loop playsinline class="w-full h-full object-cover opacity-80 parallax-media">
             <source src="{% static 'videos/hero.mp4' %}" type="video/mp4">
         </video>
         {% endif %}
@@ -187,7 +187,7 @@
                 <img src="https://via.placeholder.com/600x800?text=Under+499" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
                 <div class="absolute inset-0 bg-black/40"></div>
                 <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-6">
-                    <h3 class="font-serif text-4xl mb-2">Under ₹499</h3>
+                    <h3 class="font-serif text-4xl mb-2">Under â‚¹499</h3>
                     <span class="font-sans text-xs tracking-[0.2em] uppercase font-bold mb-6">Explore &rarr;</span>
                 </div>
             </a>
@@ -195,7 +195,7 @@
                 <img src="https://via.placeholder.com/600x800?text=Under+999" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
                 <div class="absolute inset-0 bg-black/40"></div>
                 <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-6">
-                    <h3 class="font-serif text-4xl mb-2">Under ₹999</h3>
+                    <h3 class="font-serif text-4xl mb-2">Under â‚¹999</h3>
                     <span class="font-sans text-xs tracking-[0.2em] uppercase font-bold mb-6">Explore &rarr;</span>
                 </div>
             </a>
@@ -299,7 +299,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-left">
                 <!-- Hardcoded reviews as placeholders -->
                 <div class="flex flex-col">
-                    <div class="text-brand-gold mb-4 text-lg">★★★★★</div>
+                    <div class="text-brand-gold mb-4 text-lg">â˜…â˜…â˜…â˜…â˜…</div>
                     <h4 class="font-serif text-xl text-brand-dark mb-3">Exquisite Craftsmanship</h4>
                     <p class="font-sans font-light text-brand-dark/80 text-sm leading-relaxed mb-6 flex-1">"The detail on the bridal set is absolutely stunning. It made my wedding day complete. The packaging was secure and luxurious."</p>
                     <div class="flex items-center gap-3">
@@ -311,7 +311,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col">
-                    <div class="text-brand-gold mb-4 text-lg">★★★★★</div>
+                    <div class="text-brand-gold mb-4 text-lg">â˜…â˜…â˜…â˜…â˜…</div>
                     <h4 class="font-serif text-xl text-brand-dark mb-3">Beyond Expectations</h4>
                     <p class="font-sans font-light text-brand-dark/80 text-sm leading-relaxed mb-6 flex-1">"I ordered a diamond replica ring and it shines brighter than the real thing. Highly recommend Elorah for their prompt service."</p>
                     <div class="flex items-center gap-3">
@@ -323,7 +323,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col">
-                    <div class="text-brand-gold mb-4 text-lg">★★★★★</div>
+                    <div class="text-brand-gold mb-4 text-lg">â˜…â˜…â˜…â˜…â˜…</div>
                     <h4 class="font-serif text-xl text-brand-dark mb-3">Perfect Gift</h4>
                     <p class="font-sans font-light text-brand-dark/80 text-sm leading-relaxed mb-6 flex-1">"Gifted a pair of AD jhumkas to my mother. She loved the quality and the traditional design. Will definitely shop again."</p>
                     <div class="flex items-center gap-3">
@@ -337,8 +337,8 @@
             </div>
             <!-- Pagination dots/arrows -->
             <div class="flex justify-center gap-8 mt-12 text-brand-dark">
-                <button class="hover:text-brand-gold text-2xl">‹</button>
-                <button class="hover:text-brand-gold text-2xl">›</button>
+                <button class="hover:text-brand-gold text-2xl">â€¹</button>
+                <button class="hover:text-brand-gold text-2xl">â€º</button>
             </div>
         </div>
     </div>
@@ -379,7 +379,7 @@
         <span class="eyebrow block mb-6">Begin Your Journey</span>
         <h2 class="text-5xl md:text-6xl font-serif text-brand-dark mb-6">Jewellery Made for <span class="italic-gold">Kerala's</span> Queens</h2>
         <p class="font-serif italic text-xl text-brand-muted mb-8">Discover the piece that speaks to your soul.</p>
-        <div class="eyebrow !text-brand-gold mb-12">✦ TRIVANDRUM &middot; KOCHI &middot; KERALA &middot; INDIA ✦</div>
+        <div class="eyebrow !text-brand-gold mb-12">âœ¦ TRIVANDRUM &middot; KOCHI &middot; KERALA &middot; INDIA âœ¦</div>
         
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="{% url 'catalog:product-list' %}" class="bg-brand-gold text-white font-sans text-xs tracking-[0.2em] uppercase font-bold py-4 px-10 hover:bg-brand-dark transition duration-300">Shop All Collections</a>
@@ -388,3 +388,4 @@
     </div>
 </section>
 {% endblock %}
+

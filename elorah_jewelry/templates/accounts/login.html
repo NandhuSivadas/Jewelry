@@ -1,15 +1,59 @@
 ﻿{% extends "base.html" %}
-{% block title %}Log In{% endblock %}
+
+{% block title %}Log In | Elorah Jewellery{% endblock %}
+
 {% block content %}
-<div class="max-w-md mx-auto mt-10 bg-white p-8 border border-gray-200">
-    <h2 class="text-3xl font-serif text-charcoal-900 mb-6 text-center">Sign In</h2>
-    <form method="post" action="{% url 'accounts:login' %}">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.GET.next }}">
-        {{ form.as_p }}
-        <button type="submit" class="w-full bg-gold-600 text-white p-3 mt-4">Log In</button>
-    </form>
-    <p class="mt-4 text-center">Don't have an account? <a href="{% url 'accounts:register' %}" class="text-gold-600 underline">Register</a></p>
-    <p class="mt-2 text-center"><a href="{% url 'accounts:password-reset' %}" class="text-sm text-gray-500">Forgot Password?</a></p>
+<div class="bg-brand-header py-4 border-b border-brand-panel text-xs tracking-widest font-sans uppercase">
+    <div class="container mx-auto px-4 flex items-center justify-center text-brand-muted">
+        <span class="text-brand-dark font-medium">Authentication</span>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 py-20 flex justify-center">
+    <div class="max-w-md w-full reveal-up">
+        <div class="text-center mb-10">
+            <h2 class="text-5xl font-serif text-brand-dark mb-4">Sign <span class="italic-gold">In</span></h2>
+            <p class="font-sans text-sm tracking-widest uppercase text-brand-muted">Welcome back to Elorah</p>
+        </div>
+
+        {% if form.non_field_errors %}
+        <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 mb-6 font-sans text-sm text-center">
+            {{ form.non_field_errors.0 }}
+        </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'accounts:login' %}" class="space-y-6">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.GET.next|default:'' }}">
+            
+            <div class="flex flex-col">
+                <label class="eyebrow !text-brand-dark mb-2">Email Address</label>
+                <input type="email" name="email" value="{{ form.email.value|default:'' }}" required class="border border-brand-panel bg-transparent px-4 py-3 text-sm focus:outline-none focus:border-brand-gold font-sans w-full transition">
+                {% if form.email.errors %}<span class="text-red-500 text-xs mt-1">{{ form.email.errors.0 }}</span>{% endif %}
+            </div>
+            
+            <div class="flex flex-col">
+                <label class="eyebrow !text-brand-dark mb-2">Password</label>
+                <input type="password" name="password" required class="border border-brand-panel bg-transparent px-4 py-3 text-sm focus:outline-none focus:border-brand-gold font-sans w-full transition">
+                {% if form.password.errors %}<span class="text-red-500 text-xs mt-1">{{ form.password.errors.0 }}</span>{% endif %}
+            </div>
+            
+            <div class="flex justify-between items-center text-sm font-sans pt-2">
+                <a href="{% url 'accounts:password-reset' %}" class="text-brand-muted hover:text-brand-gold transition underline-offset-4 hover:underline">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="w-full bg-brand-dark text-white p-4 font-sans text-xs tracking-[0.2em] uppercase font-bold hover:bg-brand-gold transition shadow-md">
+                Sign In
+            </button>
+        </form>
+
+        <div class="mt-12 text-center border-t border-brand-panel pt-8">
+            <p class="font-sans text-brand-muted text-sm mb-4">Don't have an account?</p>
+            <a href="{% url 'accounts:register' %}" class="inline-block border border-brand-dark text-brand-dark px-10 py-3 font-sans text-xs tracking-[0.2em] uppercase font-bold hover:bg-brand-dark hover:text-white transition">
+                Create Account
+            </a>
+        </div>
+    </div>
 </div>
 {% endblock %}
+
